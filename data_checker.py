@@ -2,9 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from dateutil import parser
 import time
-import random
 
-import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
