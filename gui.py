@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 ###########################################################################
-## Python code generated with wxFormBuilder (version Jun 17 2015)
-## http://www.wxformbuilder.org/
+# Python code generated with wxFormBuilder (version Jun 17 2015)
+# http://www.wxformbuilder.org/
 ##
-## PLEASE DO "NOT" EDIT THIS FILE!
+# PLEASE DO "NOT" EDIT THIS FILE!
 ###########################################################################
 import smtplib
 import time
@@ -48,7 +48,7 @@ def send_email(message, settings, subject="Tickets available again...", retry=0)
 
 
 def ticket_status_check(arguments):
-    
+
     key = arguments[0]
     value = arguments[1]
     settings = arguments[2]
@@ -60,11 +60,12 @@ def ticket_status_check(arguments):
     checker = check_website(url=url, proxies=settings['Proxy'],
                             row=value[5], log=None, headless=settings['Headless'])
     status_data = checker.check_status()
-    
+
     print("------------ ticket status check ------------")
     print(status_data)
-    
-    status = '|'.join(["Row {}:{}".format(x['row'], x['status']) for x in status_data])
+
+    status = '|'.join(["Row {}:{}".format(x['row'], x['status'])
+                      for x in status_data])
     evt_data = (value[0], value[1], status, value[3], value[4], value[5], value[6],
                 datetime.today().strftime('%Y-%m-%d %H:%M'))
 
@@ -74,12 +75,13 @@ def ticket_status_check(arguments):
     if value[2] != '-' or value[2].strip() != '':
         for x in value[2].split("|"):
             try:
-                old_data.update({int(x.split(":")[0].replace("Row ", '')): x.split(':')[1]})
+                old_data.update(
+                    {int(x.split(":")[0].replace("Row ", '')): x.split(':')[1]})
             except ValueError:
                 print(value[2])
     # print("000000000000000000000-------------------000000")
     # print(status_data)
-    
+
     for row in status_data:
         try:
             old_status = old_data[row['row']]
@@ -88,22 +90,18 @@ def ticket_status_check(arguments):
         new_status = row['status']
         print("NEW STATUS:", new_status, "OLD STATUS:", old_status)
 
-
         if old_status:
             if old_status == "Sold Out" and new_status != "Sold Out":
                 message = "Tickets for event {}\nTicket Type: {}(ROW: {})\nURL: {}\nStatus went from {} to {}\n".format(value[0], row['name'],
-                                                                                           row['row'], url, old_status, new_status)
+                                                                                                                        row['row'], url, old_status, new_status)
                 send_email(message, settings)
         if old_status is None or old_status != 'Unavailable':
             if new_status == "Unavailable":
                 message = "Tickets for event {}\nTicket Type: {}(ROW: {})\nURL: {}\ntatus went from {} to {}\n".format(value[0], row['name'],
-                                                                                           row['row'], url, old_status, new_status)
+                                                                                                                       row['row'], url, old_status, new_status)
                 send_email(message, settings)
 
-
-
     return (key, evt_data), (url, time.time())
-
 
     self.event_data[key] = evt_data
     self.save_event_data()
@@ -120,7 +118,7 @@ class TestListCtrl(wx.ListCtrl):
 
 
 ###########################################################################
-## Class MyFrame1
+# Class MyFrame1
 ###########################################################################
 
 class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
@@ -142,11 +140,13 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
 
         bSizer2 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.m_button_start = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_button_start = wx.Button(
+            self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_button_start.Bind(wx.EVT_BUTTON, self.start_checking)
         bSizer2.Add(self.m_button_start, 0, wx.ALL, 5)
 
-        self.m_gauge1 = wx.Gauge(self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL)
+        self.m_gauge1 = wx.Gauge(
+            self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL)
         self.m_gauge1.SetValue(0)
         bSizer2.Add(self.m_gauge1, 0, wx.ALL, 5)
 
@@ -155,34 +155,41 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
                                        m_comboBox1Choices, 0)
         bSizer2.Add(self.m_comboBox1, 0, wx.ALL, 5)
 
-        self.m_button_up = wx.Button(self, wx.ID_ANY, u"↑", wx.DefaultPosition, wx.Size(25, 25), 0)
+        self.m_button_up = wx.Button(
+            self, wx.ID_ANY, u"↑", wx.DefaultPosition, wx.Size(25, 25), 0)
         self.m_button_up.Bind(wx.EVT_BUTTON, self.sort_up)
         bSizer2.Add(self.m_button_up, 0, wx.ALL, 5)
 
-        self.m_button_down = wx.Button(self, wx.ID_ANY, u"↓", wx.DefaultPosition, wx.Size(25, 25), 0)
+        self.m_button_down = wx.Button(
+            self, wx.ID_ANY, u"↓", wx.DefaultPosition, wx.Size(25, 25), 0)
         self.m_button_down.Bind(wx.EVT_BUTTON, self.sort_down)
         bSizer2.Add(self.m_button_down, 0, wx.ALL, 5)
 
-        self.m_text_log = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(300, -1), 0)
+        self.m_text_log = wx.TextCtrl(
+            self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(300, -1), 0)
         bSizer2.Add(self.m_text_log, 0, wx.ALL | wx.EXPAND, 5)
 
         bSizer1.Add(bSizer2, 0, wx.ALL, 5)
 
         bSizer3 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.m_button_add = wx.Button(self, wx.ID_ANY, u"Add Event", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_button_add = wx.Button(
+            self, wx.ID_ANY, u"Add Event", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_button_add.Bind(wx.EVT_BUTTON, self.add_event)
         bSizer3.Add(self.m_button_add, 0, wx.ALL, 5)
 
-        self.m_button_edit = wx.Button(self, wx.ID_ANY, u"Edit Event", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_button_edit = wx.Button(
+            self, wx.ID_ANY, u"Edit Event", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_button_edit.Bind(wx.EVT_BUTTON, self.edit_event)
         bSizer3.Add(self.m_button_edit, 0, wx.ALL, 5)
 
-        self.m_button_remove = wx.Button(self, wx.ID_ANY, u"Remove Event", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_button_remove = wx.Button(
+            self, wx.ID_ANY, u"Remove Event", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_button_remove.Bind(wx.EVT_BUTTON, self.remove_event)
         bSizer3.Add(self.m_button_remove, 0, wx.ALL, 5)
 
-        self.m_button_settings = wx.Button(self, wx.ID_ANY, u"Settings", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_button_settings = wx.Button(
+            self, wx.ID_ANY, u"Settings", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_button_settings.Bind(wx.EVT_BUTTON, self.edit_settings)
         bSizer3.Add(self.m_button_settings, 0, wx.ALL, 5)
 
@@ -190,9 +197,9 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
 
         self.list_ctrl = TestListCtrl(self, size=(-1, 1500),
                                       style=wx.LC_REPORT
-                                            | wx.BORDER_SUNKEN
-                                            | wx.LC_SORT_ASCENDING
-                                            | wx.LC_REPORT
+                                      | wx.BORDER_SUNKEN
+                                      | wx.LC_SORT_ASCENDING
+                                      | wx.LC_REPORT
                                       )
         self.list_ctrl.InsertColumn(0, "Event Name")
         self.list_ctrl.InsertColumn(1, "Date", wx.LIST_FORMAT_RIGHT)
@@ -227,7 +234,6 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
         }
         column_idx = column_indexes[self.m_comboBox1.GetValue()]
 
-
         print("Sorting by column:", self.m_comboBox1.GetValue())
         data_lst = []
         for key, data in self.event_data.items():
@@ -244,7 +250,8 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
         date_format = "%Y-%m-%d"
         if column_idx == 8:
             date_format += ' %H:%M'
-        data_lst.sort(key=lambda L: datetime.strptime(L[column_idx], date_format))
+        data_lst.sort(key=lambda L: datetime.strptime(
+            L[column_idx], date_format))
 
         data_lst2 = []
         for d in data_lst:
@@ -275,17 +282,17 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
                     data_key = key
                     break
 
-            
             dlg = EditEventDialog(self, value)
             if dlg.ShowModal() == wx.ID_OK:
                 data = dlg.add_event()
                 url = data['url']
-                date = data['date'] 
+                date = data['date']
                 name = data['name']
                 interval = data['interval']
                 ticket_row = data['row']
 
-                evt_data = (name, date, value[2], interval, url, ticket_row, value[6], value[7])
+                evt_data = (
+                    name, date, value[2], interval, url, ticket_row, value[6], value[7])
                 self.event_data[key] = evt_data
                 self.save_event_data()
                 self.load_data_to_list_ctrl()
@@ -311,7 +318,7 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
             self.event_data = self.fix_ids()
             self.save_event_data()
             self.load_data_to_list_ctrl()
-            #self.mas.remove_event(value)
+            # self.mas.remove_event(value)
 
     def edit_settings(self, event):
         dlg = SettingsDialog(self)
@@ -331,7 +338,8 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
             ticket_row = data['row']
             date_created = datetime.today().strftime('%Y-%m-%d')
             # print(self.event_data)
-            evt_dat = (name, date, '-', interval, url, ticket_row, date_created, "-")
+            evt_dat = (name, date, '-', interval, url,
+                       ticket_row, date_created, "-")
             self.event_data[len(self.event_data.keys())+1] = evt_dat
             self.save_event_data()
             self.load_data_to_list_ctrl()
@@ -347,18 +355,16 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
             self.m_gauge1.SetValue(0)
             self.m_button_start.SetLabel("Start")
 
-
-
-
     def update_gui(self):
         self.shutdown_event = threading.Event()
-        
+
         while True:
             if self.m_button_start.LabelText == "Start":
                 self.shutdown_event.set()
                 break
-           
-            events_to_check = {}   # Here go events from event_data that are due to be checked (timestamp)
+
+            # Here go events from event_data that are due to be checked (timestamp)
+            events_to_check = {}
             for key, value in self.event_data.items():
                 url = value[4]
                 if url in self.event_timestamps.keys():
@@ -370,17 +376,15 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
                 else:
                     events_to_check[key] = value
 
-
-            event_lst = [(x[0], x[1], self.settings) for x in events_to_check.items()]
-            u=1
-            print(f"event list>>>>>>>>>>>>>>>>>>>>>>>>>>{event_lst}{u+1}")
+            event_lst = [(x[0], x[1], self.settings)
+                         for x in events_to_check.items()]
 
             def chunks(l, n):
                 """Yield successive n-sized chunks from l."""
                 for i in range(0, len(l), n):
                     yield l[i:i + n]
 
-            number_of_threads = 4     #TODO Add threads to settings
+            number_of_threads = 4  # TODO Add threads to settings
             for lst in chunks(event_lst, number_of_threads):
                 # with Pool(number_of_threads) as p:
                 #     r = p.map(ticket_status_check, lst)
@@ -388,7 +392,6 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
                 r = []
                 for l in lst:
                     r.append(ticket_status_check(l))
-
 
                 data_lst = [x[0] for x in r if x]
                 timestamp_lst = [x[1] for x in r if x]
@@ -399,8 +402,6 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
 
                 self.save_event_data()
                 self.load_data_to_list_ctrl()
-
-
 
             # ########################################################
             #
@@ -454,6 +455,7 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
             #     self.event_timestamps[url] = time.time()
 
     # Other
+
     def send_email(self, message, subject="Tickets available again...", retry=0):
         server = smtplib.SMTP('smtp.gmail.com', 587)
         try:
@@ -468,14 +470,15 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
         msg = "Subject: {}\n\n{}".format(subject, message)
         msg = msg.encode()
 
-
         print('sending to', self.settings['NotifyEmail'])
         try:
-            server.sendmail(self.settings['GmailEmail'], self.settings['NotifyEmail'], msg)
+            server.sendmail(
+                self.settings['GmailEmail'], self.settings['NotifyEmail'], msg)
         except UnicodeEncodeError:
             pass
         time.sleep(1)
         server.quit()
+
     def load_event_data(self):
         with open('data.pickle', 'rb') as f:
             self.event_data = pickle.load(f)

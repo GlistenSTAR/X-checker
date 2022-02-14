@@ -13,7 +13,6 @@ def check_website(url, proxies, row, log=None, headless=False):
     print(url)
     if '.axs.' in url:
         return Axs(url, proxies, row, log, headless)
-    
 
 
 class Scraper(object):
@@ -111,19 +110,18 @@ class Scraper(object):
                 zp.writestr("background.js", background_js)
             chrome_options.add_extension(pluginfile)
             time.sleep(1)
+        # install ticket tool
         chrome_options.add_extension("TBL_AXS_Extension.zip")
-        time.sleep(3000)
-        if user_agent:
-            chrome_options.add_argument('--user-agent=%s' % user_agent)
+
         if user_agent:
             chrome_options.add_argument('--user-agent=%s' % user_agent)
         try:
-            # chrome_options.add_argument('--headless')
-            driver = webdriver.Chrome('chromedriver', chrome_options=chrome_options)
+            driver = webdriver.Chrome(
+                'chromedriver', chrome_options=chrome_options)
         except Exception as E:
             print('Error ', E)
             return self.open_driver()
-        
+
         # Check if it's working
         driver.get('https://www.google.com/')
         try:
@@ -137,7 +135,9 @@ class Scraper(object):
         except:
             driver.quit()
             return self.open_driver()
+        time.sleep(3000)
         return driver
+
         # if headless:
         #     chrome_options.add_argument('--headless')
         # driver = webdriver.Chrome(chrome_options=chrome_options)
@@ -147,14 +147,16 @@ class Scraper(object):
 class Axs(Scraper):
 
     def check_status_new_style(self, table, ret=0):
-       
+
         out = []
         table = BeautifulSoup(table.get_attribute('outerHTML'), 'html.parser')
-        items = table.find_all('div', {'class': 'tiered-ticket-display-content-root'})
+        items = table.find_all(
+            'div', {'class': 'tiered-ticket-display-content-root'})
         for row in self.rows:
             item = items[row-1]
             name = item.find('h3').text.strip()
-            status_element = item.find('div', {'class': 'eds-ticket-card-content'}).contents[1]
+            status_element = item.find(
+                'div', {'class': 'eds-ticket-card-content'}).contents[1]
            # print(status_element.prettify())
             select = status_element.find('select')
             if select:
@@ -167,7 +169,7 @@ class Axs(Scraper):
         return out
 
     def check_status(self, ret=0):
-        
+
         out = []
         if '?' in self.url:
             self.url = self.url[:self.url.find('?')]
@@ -175,30 +177,35 @@ class Axs(Scraper):
             self.url += "#tickets"
         try:
             self.driver.get(self.url)
-            
+
         except:
             self.driver.quit()
             self.driver = self.open_driver(headless=False)
             return self.check_status(ret)
         try:
-           
-            table = self.driver.find_element_by_class_name('js-ticket-list-container')
-            print("*************************************preview one************************************")
-            
+
+            table = self.driver.find_element_by_class_name(
+                'js-ticket-list-container')
+            print(
+                "*************************************preview one************************************")
+
         except:
             # TODO check if new style
-            print("**************************************new one************************************")
-            _id = self.driver.find_element_by_tag_name('body').get_attribute('data-event-id')
-           
+            print(
+                "**************************************new one************************************")
+            _id = self.driver.find_element_by_tag_name(
+                'body').get_attribute('data-event-id')
+
             if _id is None:
                 return out
             xpath = '//*[@id="eventbrite-widget-modal-{}"]'.format(_id)
-           
-            self.driver.switch_to.frame(self.driver.find_element_by_xpath(xpath))
+
+            self.driver.switch_to.frame(
+                self.driver.find_element_by_xpath(xpath))
             try:
                 print(":::::::::::::::::::::::::::::::::::::{}::::::::::::::::", xpath)
                 table = self.driver.find_element_by_tag_name('dialog')
-                
+
                 return self.check_status_new_style(table)
             except IndexError:
                 for row in self.rows:
@@ -214,7 +221,7 @@ class Axs(Scraper):
                                 'row': row,
                                 'name': 'row {}'.format(row)})
                 return out
-           
+
             if ret == 10:
                 self.driver.quit()
                 return out
