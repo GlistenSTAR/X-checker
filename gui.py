@@ -103,10 +103,10 @@ def ticket_status_check(arguments):
 
     return (key, evt_data), (url, time.time())
 
-    self.event_data[key] = evt_data
-    self.save_event_data()
-    self.load_data_to_list_ctrl()
-    self.event_timestamps[url] = time.time()
+    # self.event_data[key] = evt_data
+    # self.save_event_data()
+    # self.load_data_to_list_ctrl()
+    # self.event_timestamps[url] = time.time()
 
 
 class TestListCtrl(wx.ListCtrl):
@@ -148,7 +148,7 @@ class CheckerApp(wx.Frame, listmix.ColumnSorterMixin):
         self.m_gauge1 = wx.Gauge(
             self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL)
         self.m_gauge1.SetValue(0)
-        bSizer2.Add(self.m_gauge1, 0, wx.ALL, 5)
+        bSizer2.Add(self.m_gauge1, 5, wx.ALL, 8)
 
         m_comboBox1Choices = [u'Date', u'Added on', u'Last Check']
         self.m_comboBox1 = wx.ComboBox(self, wx.ID_ANY, u"Select...", wx.DefaultPosition, wx.DefaultSize,
